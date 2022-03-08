@@ -46,7 +46,7 @@ app.get("/",(req,res)=>{
 
 io.on("connection",async function (socket:Socket) {
     console.log("connected to websocket")    
-    socket.on("connection",(data)=>{
+    socket.on("connection",(data:any)=>{
         console.log("Connected to websockets succesfully")
     })
     socket.on("join_message",async(data:any)=>{
@@ -54,7 +54,7 @@ io.on("connection",async function (socket:Socket) {
         socket.join(conversation._id.toString())
 
     })
-    socket.on("send_message",async(data)=>{
+    socket.on("send_message",async(data:any)=>{
         const conversation=await ConversationModel.get_or_new(new ObjectId(data.me),new ObjectId(data.other_user))
         MessageModel.create({
             conversation:conversation._id,
