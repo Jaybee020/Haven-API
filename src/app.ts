@@ -20,7 +20,10 @@ if(! process.env.PORT){
 }
 
 
-mongoose.connect("mongodb://localhost:27017/Shoot-API")
+
+
+const uri = String(process.env.MONGODB_URI)
+mongoose.connect(uri)
                 .then(()=>{console.log('Connected to the database')})
                 .catch((err)=>{console.error("Couldn'to connect to database")})
 
