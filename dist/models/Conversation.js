@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,15 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Schema, model, Types } from "mongoose";
-const ConversationSchema = new Schema({
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConversationSchema = exports.ConversationModel = void 0;
+const mongoose_1 = require("mongoose");
+const ConversationSchema = new mongoose_1.Schema({
     initiator: {
-        type: Types.ObjectId,
+        type: mongoose_1.Types.ObjectId,
         ref: "User",
         required: true
     },
     recipient: {
-        type: Types.ObjectId,
+        type: mongoose_1.Types.ObjectId,
         ref: "User",
         required: true
     },
@@ -24,7 +27,7 @@ const ConversationSchema = new Schema({
         required: false
     },
     lastMessage: {
-        type: Types.ObjectId,
+        type: mongoose_1.Types.ObjectId,
         required: false,
         ref: "Message"
     },
@@ -33,6 +36,7 @@ const ConversationSchema = new Schema({
         default: true
     }
 });
+exports.ConversationSchema = ConversationSchema;
 ConversationSchema.static("get_or_new", function (user1, user2) {
     return __awaiter(this, void 0, void 0, function* () {
         if (user1 == user2) {
@@ -57,5 +61,5 @@ ConversationSchema.static("get_conversations", function (user) {
         return this.find({ $or: [query1, query2] }).populate(["initiator", "recipient"]).sort("-lastContact");
     });
 });
-const ConversationModel = model("Conversation", ConversationSchema);
-export { ConversationModel, ConversationSchema, };
+const ConversationModel = (0, mongoose_1.model)("Conversation", ConversationSchema);
+exports.ConversationModel = ConversationModel;

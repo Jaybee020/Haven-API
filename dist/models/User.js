@@ -1,7 +1,13 @@
-import { Schema, model } from "mongoose";
-import bcrypt from "bcrypt";
-import { sign, verify } from "jsonwebtoken";
-const UserSchema = new Schema({
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserModel = void 0;
+const mongoose_1 = require("mongoose");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = require("jsonwebtoken");
+const UserSchema = new mongoose_1.Schema({
     username: {
         type: String,
         required: true
@@ -26,11 +32,11 @@ const UserSchema = new Schema({
 UserSchema.pre("save", function (next) {
     const user = this;
     if (user.isModified("password")) {
-        bcrypt.genSalt(10, (err, salt) => {
+        bcrypt_1.default.genSalt(10, (err, salt) => {
             if (err) {
                 return next(err);
             }
-            bcrypt.hash(user.password, salt, (err, hash) => {
+            bcrypt_1.default.hash(user.password, salt, (err, hash) => {
                 if (err) {
                     return next(err);
                 }
@@ -43,7 +49,7 @@ UserSchema.pre("save", function (next) {
 //compare passwords
 UserSchema.methods.checkPassword = function (password, cb) {
     var user = this;
-    bcrypt.compare(password, user.password, function (err, isMatch) {
+    bcrypt_1.default.compare(password, user.password, function (err, isMatch) {
         if (err) {
             return cb(err);
         }
@@ -54,8 +60,8 @@ UserSchema.methods.checkPassword = function (password, cb) {
 UserSchema.methods.generatetoken = function (cb) {
     const user = this;
     console.log(process.env.LOGIN_SECRET);
-    var token = sign(user._id.toString(), String(process.env.LOGIN_SECRET));
-    UserModel.findOneAndUpdate({ _id: user._id }, { $set: { token: token } }, function (err, updatedUser) {
+    var token = (0, jsonwebtoken_1.sign)(user._id.toString(), String(process.env.LOGIN_SECRET));
+    exports.UserModel.findOneAndUpdate({ _id: user._id }, { $set: { token: token } }, function (err, updatedUser) {
         if (err) {
             console.log(err);
         }
@@ -65,7 +71,7 @@ UserSchema.methods.generatetoken = function (cb) {
 };
 UserSchema.statics.findByToken = function (token, cb) {
     var user = this;
-    const decode = verify(token, String(process.env.LOGIN_SECRET));
+    const decode = (0, jsonwebtoken_1.verify)(token, String(process.env.LOGIN_SECRET));
     user.findOne({ token: decode }, function (err, user) {
         if (err) {
             console.error(err);
@@ -79,4 +85,4 @@ UserSchema.methods.deletetoken = function (cb) {
         cb(null, user);
     });
 };
-export const UserModel = model('User', UserSchema);
+exports.UserModel = (0, mongoose_1.model)('User', UserSchema);

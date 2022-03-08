@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -7,9 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import express from "express";
-import { UserModel } from "../models/User";
-const router = express.Router();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.registerRoute = void 0;
+const express_1 = __importDefault(require("express"));
+const User_1 = require("../models/User");
+const router = express_1.default.Router();
 router.get("/", function (req, res) {
     res.status(200).send("Welcome to register page");
 });
@@ -23,13 +29,13 @@ router.post("/", function (req, res) {
                 message: "The username is too short"
             });
         }
-        const existingUser = yield UserModel.findOne({ username: username });
+        const existingUser = yield User_1.UserModel.findOne({ username: username });
         if (existingUser) {
             res.status(400).send({
                 message: "The user with username " + existingUser.username + " is already in use"
             });
         }
-        UserModel.create({
+        User_1.UserModel.create({
             username: username,
             email: email,
             password: password
@@ -45,4 +51,4 @@ router.post("/", function (req, res) {
         });
     });
 });
-export const registerRoute = router;
+exports.registerRoute = router;

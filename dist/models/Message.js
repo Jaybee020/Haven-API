@@ -1,17 +1,20 @@
-import { Schema, model, Types } from "mongoose";
-const MessageSchema = new Schema({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MessageModel = void 0;
+const mongoose_1 = require("mongoose");
+const MessageSchema = new mongoose_1.Schema({
     conversation: {
-        type: Types.ObjectId,
+        type: mongoose_1.Types.ObjectId,
         ref: "Conversation",
         required: true
     },
     sender: {
-        type: Types.ObjectId,
+        type: mongoose_1.Types.ObjectId,
         required: true,
         ref: "User"
     },
     receiver: {
-        type: Types.ObjectId,
+        type: mongoose_1.Types.ObjectId,
         ref: "User",
         required: true
     },
@@ -23,5 +26,5 @@ const MessageSchema = new Schema({
         type: String
     }
 });
-const MessageModel = model("Message", MessageSchema);
-export { MessageModel };
+const MessageModel = (0, mongoose_1.model)("Message", MessageSchema);
+exports.MessageModel = MessageModel;

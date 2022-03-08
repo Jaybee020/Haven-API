@@ -1,7 +1,10 @@
-import { UserModel } from "../models/User";
-export const authenticatetoken = function (req, res, next) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authenticatetoken = void 0;
+const User_1 = require("../models/User");
+const authenticatetoken = function (req, res, next) {
     const token = req.cookies.x_auth;
-    UserModel.findByToken(token, (err, user) => {
+    User_1.UserModel.findByToken(token, (err, user) => {
         if (err) {
             console.error(err);
         }
@@ -15,3 +18,4 @@ export const authenticatetoken = function (req, res, next) {
         }
     });
 };
+exports.authenticatetoken = authenticatetoken;
