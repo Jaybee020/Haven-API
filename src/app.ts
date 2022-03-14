@@ -43,7 +43,7 @@ app.use("/login",loginRoute)
 app.use("/chat",chatrouter)
 
 app.get("/",(req,res)=>{
-    res.status(200).send('Welcome')
+    res.status(200).send('Welcome to landing page')
 })
 
 
@@ -88,6 +88,6 @@ io.on("connection",async function (socket:Socket) {
     
 })
 
-httpServer.listen(PORT||8000,"'0.0.0.0",(()=>{
+httpServer.listen(PORT||8000,(()=>{
     console.log("Listening here on "+PORT)
 }))
