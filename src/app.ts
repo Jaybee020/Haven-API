@@ -23,7 +23,7 @@ if(! process.env.PORT){
 
 
 const uri = String(process.env.MONGODB_URI)
-mongoose.connect(uri)
+mongoose.connect(uri,{})
                 .then(()=>{console.log('Connected to the database')})
                 .catch((err)=>{console.error("Couldn'to connect to database")})
 
@@ -88,6 +88,6 @@ io.on("connection",async function (socket:Socket) {
     
 })
 
-httpServer.listen(PORT|8000,(()=>{
+httpServer.listen(PORT||8000,"'0.0.0.0",(()=>{
     console.log("Listening here on "+PORT)
 }))
