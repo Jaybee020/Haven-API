@@ -83,11 +83,17 @@ UserSchema.methods.generatetoken = function(cb:Function):void{
 
 UserSchema.statics.findByToken=function(token:string,cb:Function):void{
     var user=this;
-    const decode=verify(token,String(process.env.LOGIN_SECRET))
-    user.findOne({token:decode},function(err:Error,user:UserDocument){
-        if(err){console.error(err)}
-        cb(null,user)
-    })
+    try {
+        const decode=verify(token,String(process.env.LOGIN_SECRET))
+        user.findOne({_id:decode,token:token},function(err:Error,user:UserDocument){
+            if(err){console.error(err)}
+            cb(null,user)
+        })
+      } catch(err) {
+            cb(err,null)
+      }
+    
+    
 
 }
 

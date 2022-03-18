@@ -4,13 +4,13 @@ import { UserModel,UserDocument} from "../models/User";
 const router:Router=express.Router()
 
 router.post("/",function(req:Request,res:Response){
-    const username:string=req.body.username
+    const email:string=req.body.email
     const password:string=req.body.password
 
-    UserModel.findOne({username:username},function(err:Error,user:UserDocument|null){
+    UserModel.findOne({email:email},function(err:Error,user:UserDocument|null){
         if(!user){
             res.status(401).json({
-                message:"Auth failed,could not find username"
+                message:"Auth failed,could not find email"
             })
         }else{
             user.checkPassword(password,(err:Error,ismatch:Boolean)=>{
