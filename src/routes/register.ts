@@ -40,9 +40,24 @@ router.post("/",async function(req:Request,res:Response){
             message:"The user with username "+existingUser.username +" is already in use"
         })
     }
-    if(existingUser?.email==email){
+    else if(existingUser?.email==email){
         res.status(400).send({
             message:"The user with username "+existingUser.email +" is already in use"
+        })
+    }else{
+        UserModel.create({
+            username:username,
+            email:email,
+            password:password
+        },function(err,newUser:UserDocument){
+            if(err){
+                res.status(400).json({
+                    message:"Could not create new user"
+                })
+            }
+            res.status(200).send({
+                user:newUser
+            })
         })
     }
 
@@ -70,20 +85,7 @@ router.post("/",async function(req:Request,res:Response){
     //     });
 
     
-        UserModel.create({
-        username:username,
-        email:email,
-        password:password
-    },function(err,newUser:UserDocument){
-        if(err){
-            res.status(400).json({
-                message:"Could not create new user"
-            })
-        }
-        res.status(200).send({
-            user:newUser
-        })
-    })
+       
 })
 
 
@@ -99,26 +101,28 @@ router.post("/activateUser",async function(req:Request,res:Response){
                     message:"The user with username "+existingUser.username +" is already in use"
                 })
             }
-            if(existingUser?.email==email){
+            else if(existingUser?.email==email){
                 res.status(400).send({
                     message:"The user with username "+existingUser.email +" is already in use"
                 })
-            }
-            UserModel.create({
-                username:username,
-                email:email,
-                password:password
-            },function(err,newUser:UserDocument){
-                if(err){
-                    res.status(400).json({
-                        message:"Could not create new user"
+            }else{
+                UserModel.create({
+                    username:username,
+                    email:email,
+                    password:password
+                },function(err,newUser:UserDocument){
+                    if(err){
+                        res.status(400).json({
+                            message:"Could not create new user"
+                        })
+                    }
+                    res.status(200).send({
+                        message:"Successfully created new account",
+                        user:newUser
                     })
-                }
-                res.status(200).send({
-                    message:"Successfully created new account",
-                    user:newUser
                 })
-            })
+            }
+            
           } catch(err) {
             res
           .status(400)

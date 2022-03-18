@@ -18,15 +18,17 @@ router.post("/",function(req:Request,res:Response){
                     res.status(401).json({
                         message:"Username and password do not match"
                     })
+                }else{
+                    user.generatetoken((err:Error,user:UserDocument)=>{
+                        res.cookie("x_auth",user.token)
+                            .status(201)
+                            .send({
+                                message:"Successful Login",
+                                user:user
+                            })
+                    })
                 }
-                user.generatetoken((err:Error,user:UserDocument)=>{
-                    res.cookie("x_auth",user.token)
-                        .status(201)
-                        .send({
-                            message:"Successful Login",
-                            user:user
-                        })
-                })
+              
             })
         }
     })
