@@ -53,7 +53,7 @@ if (!process.env.PORT) {
     process.exit(1);
 }
 const uri = String(process.env.MONGODB_URI);
-mongoose_1.default.connect(uri)
+mongoose_1.default.connect(uri, {})
     .then(() => { console.log('Connected to the database'); })
     .catch((err) => { console.error("Couldn'to connect to database"); });
 //running the express app and add to middle ware
@@ -70,7 +70,7 @@ app.use("/register", register_1.registerRoute);
 app.use("/login", login_1.loginRoute);
 app.use("/chat", chat_1.chatrouter);
 app.get("/", (req, res) => {
-    res.status(200).send('Welcome');
+    res.status(200).send('Welcome to landing page');
 });
 io.on("connection", function (socket) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -112,6 +112,6 @@ io.on("connection", function (socket) {
         }));
     });
 });
-httpServer.listen(PORT | 8000, (() => {
+httpServer.listen(PORT || 8000, (() => {
     console.log("Listening here on " + PORT);
 }));

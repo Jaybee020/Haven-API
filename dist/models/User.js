@@ -71,13 +71,18 @@ UserSchema.methods.generatetoken = function (cb) {
 };
 UserSchema.statics.findByToken = function (token, cb) {
     var user = this;
-    const decode = (0, jsonwebtoken_1.verify)(token, String(process.env.LOGIN_SECRET));
-    user.findOne({ token: decode }, function (err, user) {
-        if (err) {
-            console.error(err);
-        }
-        cb(null, user);
-    });
+    try {
+        const decode = (0, jsonwebtoken_1.verify)(token, String(process.env.LOGIN_SECRET));
+        user.findOne({ _id: decode, token: token }, function (err, user) {
+            if (err) {
+                console.error(err);
+            }
+            cb(null, user);
+        });
+    }
+    catch (err) {
+        cb(err, null);
+    }
 };
 UserSchema.methods.deletetoken = function (cb) {
     var user = this;

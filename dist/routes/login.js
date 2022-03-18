@@ -8,12 +8,12 @@ const express_1 = __importDefault(require("express"));
 const User_1 = require("../models/User");
 const router = express_1.default.Router();
 router.post("/", function (req, res) {
-    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
-    User_1.UserModel.findOne({ username: username }, function (err, user) {
+    User_1.UserModel.findOne({ email: email }, function (err, user) {
         if (!user) {
             res.status(401).json({
-                message: "Auth failed,could not find username"
+                message: "Auth failed,could not find email"
             });
         }
         else {
