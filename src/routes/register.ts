@@ -37,12 +37,12 @@ router.post("/",async function(req:Request,res:Response){
     const existingUser:UserDocument|null=await UserModel.findOne({$or: [{ email:email }, { username: username}]})  
     if(existingUser?.username==username){
         res.status(400).send({
-            message:"The user with username "+existingUser.username +" is already in use"
+            message:"This username is already in use"
         })
     }
     else if(existingUser?.email==email){
         res.status(400).send({
-            message:"The user with username "+existingUser.email +" is already in use"
+            message:"This email is already in use"
         })
     }else{
         UserModel.create({
@@ -56,7 +56,7 @@ router.post("/",async function(req:Request,res:Response){
                 })
             }
             res.status(200).send({
-                user:newUser
+                message:"Your account was succesfully created"
             })
         })
     }

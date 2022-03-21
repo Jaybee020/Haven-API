@@ -19,12 +19,13 @@ router.post("/",function(req:Request,res:Response){
                         message:"Username and password do not match"
                     })
                 }else{
-                    user.generatetoken((err:Error,user:UserDocument)=>{
-                        res.cookie("x_auth",user.token)
+                    user.generatetoken(async(err:Error,token:string)=>{
+                        await UserModel.updateOne({_id:user._id},{$set:{token:token}})
+                        res.cookie("x_auth",token)
                             .status(201)
                             .send({
                                 message:"Successful Login",
-                                user:user
+                                token:token
                             })
                     })
                 }

@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -23,9 +32,8 @@ const UserSchema = new mongoose_1.Schema({
         type: Date,
         default: Date.now
     },
-    active: {
-        type: Boolean,
-        default: true
+    token: {
+        type: String
     }
 });
 //hash password before saving it to db
@@ -61,13 +69,8 @@ UserSchema.methods.generatetoken = function (cb) {
     const user = this;
     console.log(process.env.LOGIN_SECRET);
     var token = (0, jsonwebtoken_1.sign)(user._id.toString(), String(process.env.LOGIN_SECRET));
-    exports.UserModel.findOneAndUpdate({ _id: user._id }, { $set: { token: token } }, function (err, updatedUser) {
-        if (err) {
-            console.log(err);
-        }
-        console.log(user);
-        cb(null, user);
-    });
+    console.log(token);
+    cb(null, token);
 };
 UserSchema.statics.findByToken = function (token, cb) {
     var user = this;
@@ -85,9 +88,13 @@ UserSchema.statics.findByToken = function (token, cb) {
     }
 };
 UserSchema.methods.deletetoken = function (cb) {
-    var user = this;
-    user.updateOne({ $unset: { token: "" } }, function (err, user) {
-        cb(null, user);
+    return __awaiter(this, void 0, void 0, function* () {
+        var user = this;
+        user.updateOne({ $unset: { token: "1" } }, function (err, user) {
+            if (err)
+                return cb(err);
+            cb(null, user);
+        });
     });
 };
 exports.UserModel = (0, mongoose_1.model)('User', UserSchema);

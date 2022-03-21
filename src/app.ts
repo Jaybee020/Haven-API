@@ -11,6 +11,10 @@ import {createServer} from "http"
 import { Server, Socket } from "socket.io"
 import { conversationDoc, ConversationModel } from "./models/Conversation"
 import { MessageDoc, MessageModel, } from "./models/Message"
+import { UserRoute } from "./routes/User"
+import  cookieParser from  "cookie-parser"
+import { logoutRoute } from "./routes/logout"
+UserRoute
 
 
 
@@ -18,6 +22,8 @@ dotenv.config()
 if(! process.env.PORT){
     process.exit(1)
 }
+
+
 
 
 
@@ -31,6 +37,7 @@ mongoose.connect(uri,{})
 const app=express()
 app.use(cors())
 app.use(json())
+app.use(cookieParser())
 app.use(morgan('dev'))
 
 
@@ -43,7 +50,9 @@ const ObjectId=mongoose.Schema.Types.ObjectId
 //routing methods
 app.use("/register",registerRoute)
 app.use("/login",loginRoute)
+app.use("/logout",logoutRoute)
 app.use("/chat",chatrouter)
+app.use("/user",UserRoute)
 
 app.get("/",(req,res)=>{
     res.status(200).send('Welcome to landing page')

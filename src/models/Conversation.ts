@@ -12,7 +12,7 @@ interface conversation{
 interface conversationDoc extends conversation,Document{}  
 interface ConversationModel extends Model<conversationDoc>{
     get_or_new:(user1:ObjectId,user2:ObjectId)=>conversationDoc
-    get_conversations:(user:ObjectId)=>conversationDoc
+    get_conversations:(user:ObjectId)=>conversationDoc[]
 }
 
 const ConversationSchema=new Schema<conversationDoc>({
@@ -42,15 +42,15 @@ const ConversationSchema=new Schema<conversationDoc>({
 })
 
 
-ConversationSchema.static("get_or_new",async function (user1:ObjectId,user2:ObjectId){
+ConversationSchema.static("get_or_new",async function (user1:ObjectId,user2:ObjectId):Promise<conversationDoc|null> {
     if(user1==user2){
         return null
     }
     const query1={initiator:user1,recipient:user2}
     const query2={initiator:user2,recipient:user1}
-    var conversation=await this.findOne({$or:[query1,query2]})
+    var conversation:null|conversationDoc=await this.findOne({$or:[query1,query2]})
     if(!conversation){
-        conversation=this.create({
+        conversation=await this.create({
             initiator:user1,
             recipient:user2,
         })
@@ -59,7 +59,7 @@ ConversationSchema.static("get_or_new",async function (user1:ObjectId,user2:Obje
     
 })
 
-ConversationSchema.static("get_conversations",async function (user:ObjectId) {
+ConversationSchema.static("get_conversations",async function (user:ObjectId):Promise<conversationDoc> {
     const query1={initiator:user}
     const query2={recipient:user}
     return this.find({$or:[query1,query2]}).populate(["initiator","recipient"]).sort("-lastContact")

@@ -46,7 +46,7 @@ ConversationSchema.static("get_or_new", function (user1, user2) {
         const query2 = { initiator: user2, recipient: user1 };
         var conversation = yield this.findOne({ $or: [query1, query2] });
         if (!conversation) {
-            conversation = this.create({
+            conversation = yield this.create({
                 initiator: user1,
                 recipient: user2,
             });

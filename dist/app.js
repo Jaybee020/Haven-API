@@ -48,6 +48,10 @@ const http_1 = require("http");
 const socket_io_1 = require("socket.io");
 const Conversation_1 = require("./models/Conversation");
 const Message_1 = require("./models/Message");
+const User_1 = require("./routes/User");
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const logout_1 = require("./routes/logout");
+User_1.UserRoute;
 dotenv.config();
 if (!process.env.PORT) {
     process.exit(1);
@@ -60,6 +64,7 @@ mongoose_1.default.connect(uri, {})
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use((0, body_parser_1.json)());
+app.use((0, cookie_parser_1.default)());
 app.use((0, morgan_1.default)('dev'));
 const httpServer = (0, http_1.createServer)(app);
 const io = new socket_io_1.Server(httpServer);
@@ -68,7 +73,9 @@ const ObjectId = mongoose_1.default.Schema.Types.ObjectId;
 //routing methods
 app.use("/register", register_1.registerRoute);
 app.use("/login", login_1.loginRoute);
+app.use("/logout", logout_1.logoutRoute);
 app.use("/chat", chat_1.chatrouter);
+app.use("/user", User_1.UserRoute);
 app.get("/", (req, res) => {
     res.status(200).send('Welcome to landing page');
 });

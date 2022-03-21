@@ -1,14 +1,14 @@
-import {Schema,model,Document,Model} from "mongoose"
+import {Schema,model,Document,Model,ObjectId,Types} from "mongoose"
 import bcrypt from "bcrypt"
 import { sign,verify} from "jsonwebtoken"
 
-interface User{
+export interface User{
     username:string,
     email:string,
     password:string,
     date_created:Date,
-    active:Boolean
 }
+
 
 export interface UserDocument extends User,Document{
     checkPassword:(password:string,cb:Function)=>Promise<void>,
@@ -38,10 +38,10 @@ const UserSchema= new Schema<UserDocument>({
         type:Date,
         default:Date.now
     },
-    active:{
-        type:Boolean,
-        default:true
+    token:{
+        type:String
     }
+   
 })
 
 //hash password before saving it to db
@@ -73,11 +73,8 @@ UserSchema.methods.generatetoken = function(cb:Function):void{
     const user=this;
     console.log(process.env.LOGIN_SECRET)
     var token =sign(user._id.toString(),String(process.env.LOGIN_SECRET))
-    UserModel.findOneAndUpdate({_id:user._id},{$set:{token:token}},function(err:Error,updatedUser:UserDocument){
-        if(err){console.log(err)}
-        console.log(user)
-        cb(null,user)
-    })
+    console.log(token)
+    cb(null,token)
     
 }
 
@@ -97,11 +94,12 @@ UserSchema.statics.findByToken=function(token:string,cb:Function):void{
 
 }
 
-UserSchema.methods.deletetoken=function(cb:Function):void{
+UserSchema.methods.deletetoken=async function(cb:Function){
     var user=this
-    user.updateOne({$unset:{token:""}},function(err:Error,user:UserDocument){
-        cb(null,user)
-    })
+    user.updateOne({ $unset: { token: "1" } }, function (err:Error, user:UserDocument) {
+        if (err) return cb(err);
+        cb(null, user);
+      });
 }
 
 export const UserModel=model<UserDocument,UserModel>('User',UserSchema)

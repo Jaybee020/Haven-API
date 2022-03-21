@@ -41,12 +41,28 @@ router.post("/", function (req, res) {
         const existingUser = yield User_1.UserModel.findOne({ $or: [{ email: email }, { username: username }] });
         if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.username) == username) {
             res.status(400).send({
-                message: "The user with username " + existingUser.username + " is already in use"
+                message: "This username is already in use"
             });
         }
-        if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.email) == email) {
+        else if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.email) == email) {
             res.status(400).send({
-                message: "The user with username " + existingUser.email + " is already in use"
+                message: "This email is already in use"
+            });
+        }
+        else {
+            User_1.UserModel.create({
+                username: username,
+                email: email,
+                password: password
+            }, function (err, newUser) {
+                if (err) {
+                    res.status(400).json({
+                        message: "Could not create new user"
+                    });
+                }
+                res.status(200).send({
+                    message: "Your account was succesfully created"
+                });
             });
         }
         // var activationToken = sign(
@@ -69,20 +85,6 @@ router.post("/", function (req, res) {
         //         res.json(info);
         //     }
         //     });
-        User_1.UserModel.create({
-            username: username,
-            email: email,
-            password: password
-        }, function (err, newUser) {
-            if (err) {
-                res.status(400).json({
-                    message: "Could not create new user"
-                });
-            }
-            res.status(200).send({
-                user: newUser
-            });
-        });
     });
 });
 router.post("/activateUser", function (req, res) {
@@ -98,26 +100,28 @@ router.post("/activateUser", function (req, res) {
                         message: "The user with username " + existingUser.username + " is already in use"
                     });
                 }
-                if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.email) == email) {
+                else if ((existingUser === null || existingUser === void 0 ? void 0 : existingUser.email) == email) {
                     res.status(400).send({
                         message: "The user with username " + existingUser.email + " is already in use"
                     });
                 }
-                User_1.UserModel.create({
-                    username: username,
-                    email: email,
-                    password: password
-                }, function (err, newUser) {
-                    if (err) {
-                        res.status(400).json({
-                            message: "Could not create new user"
+                else {
+                    User_1.UserModel.create({
+                        username: username,
+                        email: email,
+                        password: password
+                    }, function (err, newUser) {
+                        if (err) {
+                            res.status(400).json({
+                                message: "Could not create new user"
+                            });
+                        }
+                        res.status(200).send({
+                            message: "Successfully created new account",
+                            user: newUser
                         });
-                    }
-                    res.status(200).send({
-                        message: "Successfully created new account",
-                        user: newUser
                     });
-                });
+                }
             }
             catch (err) {
                 res

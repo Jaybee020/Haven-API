@@ -6,9 +6,8 @@ export interface Req extends Request{
     user?:UserDocument
 }
 
-export const authenticatetoken=function(req:Req,res:Response|any,next:any){
+export const authenticatetoken=function(req:Req,res:Response,next:any){
     const token:string=req.cookies.x_auth
-
     UserModel.findByToken(token,(err:Error,user:UserDocument|null)=>{
         if(err){console.error(err)}
         if(!user){
