@@ -29,6 +29,7 @@ router.post("/",async function(req:Request,res:Response){
     const username:string=req.body.username
     const email:string=req.body.email.toLowerCase()
     const password:string=req.body.password
+    
     if(username.length<4){
         res.status(400).send({
             message:"The username is too short"
