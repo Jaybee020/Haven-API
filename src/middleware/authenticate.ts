@@ -7,17 +7,25 @@ export interface Req extends Request{
 }
 
 export const authenticatetoken=function(req:Req,res:Response,next:any){
-    const token:string=req.cookies.x_auth
-    UserModel.findByToken(token,(err:Error,user:UserDocument|null)=>{
-        if(err){console.error(err)}
-        if(!user){
-            res.status(400).send({ auth: false, message: "Wrong cookie!" })
-        }else{
-            req.token=token
-            req.user=user
-            next()
-        }
-
-    })
+    // const token:string=req.cookies.x_auth
+    //auth header should take the form "JWT TOKEN_VALUE"
+    const authHeader=req.headers.authorization
+    if(authHeader){
+        const token=authHeader.split(" ")[1]
+        UserModel.findByToken(token,(err:Error,user:UserDocument|null)=>{
+            if(err){console.error(err)}
+            if(!user){
+                res.status(400).send({ auth: false, message: "Wrong cookie!" })
+            }else{
+                req.token=token
+                req.user=user
+                next()
+            }
+    
+        })
+    }else{
+        res.status(400).send({ auth: false, message: "Wrong cookie!" })
+    }
+    
 
 }
